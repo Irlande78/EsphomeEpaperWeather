@@ -1,5 +1,7 @@
 # EsphomeEpaperWeather
 Station météo France Esphome Epaper wareshare 800×480, 7.5inch
 
-Je ne suis pas un développeur professionnel et sans l'aide de Axellum je n'aurais pas pu aller au bout de mon projet.
+Je ne suis pas un développeur professionnel et sans l'aide de Axellum (https://github.com/Axellum/NextionWeather-Meteo-France/blob/main/README.md) je n'aurais pas pu aller au bout de mon projet.
 Je publie donc à mon tour mon code pour éventuellement aider quelqu'un à mon tour !
+![image](https://github.com/user-attachments/assets/edf704f2-c4db-4593-b195-1e4978ba324d)
+
