@@ -1,0 +1,92 @@
+#**************************************************************************
+#*****  Creation des sensor pour les recuperer avec esp32-epaper.yaml ***** 
+#**************************************************************************
+template:
+  - sensor: !include_dir_merge_list template_sensors
+
+#********************************************************
+#*****  Triggers météo jours pour esp32-epaper.yaml ***** 
+#********************************************************
+  - trigger:
+      - platform: time_pattern
+        hours: /1
+      - platform: homeassistant
+        event: start
+    action:
+      - service: weather.get_forecasts
+        data:
+          type: daily
+        target:
+          entity_id: weather.carrieres_sous_poissy
+        response_variable: daily_var
+    sensor:
+      - name: ESP32EP_Prevision_Meteo_J
+        unique_id: weather_forcast_daily
+        state: "{{ daily_var['weather.carrieres_sous_poissy'].forecast[0].condition }}"
+        attributes:
+          forecast: "{{ daily_var['weather.carrieres_sous_poissy'].forecast }}"
+
+#********************************************************
+#*****  Triggers météo heures pour esp32-epaper.yaml **** 
+#********************************************************
+  - trigger:
+      - platform: time_pattern
+        hours: /1
+      - platform: homeassistant
+        event: start
+    action:
+      - service: weather.get_forecasts
+        data:
+          type: hourly
+        target:
+          entity_id: weather.carrieres_sous_poissy
+        response_variable: hourly_var
+    sensor:
+      - name: ESP32EP_Prevision_Meteo_H
+        unique_id: weather_forcast_hourly
+        state: "{{ hourly_var['weather.carrieres_sous_poissy'].forecast[0].condition }}"
+        attributes:
+          forecast: "{{ hourly_var['weather.carrieres_sous_poissy'].forecast }}"
+
+
+# Template pour corriger la valeur de puissance retournée des prises : diviser par 10
+sensor:
+    platform: template
+    sensors:
+        prisevoiture_puissance_corrigee:
+            friendly_name : 'sensor.prisevoiture_puissance_corrigee'
+            unit_of_measurement: 'W'
+            value_template: "{{ (states('sensor.prisevoiture_puissance') | float / 10) | round(0) }}"
+
+        balloneauchaude_puissance_corrigee:
+            friendly_name : 'sensor.balloneauchaude_puissance_corrigee'
+            unit_of_measurement: 'W'
+            value_template: "{{ (states('sensor.balloneauchaude_puissance') | float / 10) | round(0) }}"
+
+        lampe_salon_puissance_corrigee:
+            friendly_name : 'sensor.lampe_salon_puissance_corrigee'
+            unit_of_measurement: 'W'
+            value_template: "{{ (states('sensor.lampe_salon_puissance') | float / 10) | round(0) }}"
+        
+        tele_salon_puissance_corrigee:
+            friendly_name : 'sensor.tele_salon_puissance_corrigee'
+            unit_of_measurement: 'W'
+            value_template: "{{ (states('sensor.tele_salon_puissance') | float / 10) | round(0) }}"  
+
+        temperature_salon_corrigee:
+            friendly_name : 'sensor.temperature_Salon_Corrigée'
+            unit_of_measurement: '°C'
+            value_template: "{{ (states('sensor.esp32_poele_bme280_1_temperature') | float +1) | round(1) }}"
+
+# Code pour affichage centrale météo epaper
+#************************************************************
+#*****  Code pour affichage centrale météo epaper : date **** 
+#************************************************************
+        date_complete:
+            entity_id: sensor.date
+            friendly_name: "Date du jour complète"
+            icon_template: mdi:calendar-today
+            value_template: >
+                {% set months = ["Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"] %}
+                {% set days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]  %}
+                {{ days[now().weekday()] + ' ' + now().day | string + ' ' + months[now().month-1] + ' ' + now().year | string }}
