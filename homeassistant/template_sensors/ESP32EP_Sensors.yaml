@@ -1,1 +1,442 @@
+#*************************************************************************************
+#*** Remplacer carrieres_sous_poissy et 78_weather_alert par votre ville et region ***
+#*** lier a l integration meteo france                                             ***
+#*** creation des sensor pour les recuperer avec esp32-epaper.yaml dans ESPhome    ***
+#*************************************************************************************
 
+
+#*************************************************
+#*****  Heures de lever et coucher de soleil ***** 
+#*************************************************
+- name: ESP32EP_nextsunrise
+  state: >
+          {{ as_timestamp(states.sun.sun.attributes.next_rising) | timestamp_custom('(%H/%M)') | replace("(0", "") | replace("(", "") | replace("/", ":") | replace (")", "") }}
+  icon: mdi:weather-sunset-up
+
+- name: ESP32EP_nextset
+  state: >
+          {{ as_timestamp(states.sun.sun.attributes.next_setting) | timestamp_custom('(%H/%M)') | replace("(0", "") | replace("(", "") | replace("/", ":") | replace (")", "") }}
+  icon: mdi:weather-sunset-down
+
+#******************************************************
+#*****  Prévions de la prochaine pluie en minutes ***** 
+#******************************************************
+- name: ESP32EP_Pluie_proch
+  state: >-
+          {% set pluie = states('sensor.carrieres_sous_poissy_next_rain') %}
+              {% if is_state("sensor.carrieres_sous_poissy_next_rain", 'unknown') %}
+                0
+              {% else %}
+                {%- set ts_event = as_timestamp(states.sensor.carrieres_sous_poissy_next_rain.state) %}
+                {%- set ts_now = as_timestamp(now())|round(0) %}
+                #{%- set ts_delta = ((ts_event - ts_now)/60)|round(0) %}
+                {%- set ts_delta = ((ts_event - ts_now)/60) %}
+                {{ ts_delta }}
+              {% endif %}
+              
+
+#*********************************
+#*****  Alertes meteo france ***** 
+#*********************************
+- name: ESP32EP_alert_vent
+  state: >-
+          {% set ESP32EP_alert_vent = state_attr('sensor.78_weather_alert', 'Vent violent') %} {{ ESP32EP_alert_vent }}
+
+- name: ESP32EP_alert_inondation
+  state: >-
+          {% set ESP32EP_alert_inondation = state_attr('sensor.78_weather_alert', 'Inondation') %} {{ ESP32EP_alert_inondation }}
+
+- name: ESP32EP_alert_orages
+  state: >-
+          {% set ESP32EP_alert_orages = state_attr('sensor.78_weather_alert', 'Orages') %} {{ ESP32EP_alert_orages }}
+
+- name: ESP32EP_alert_pluie_inondation
+  state: >-
+          {% set ESP32EP_alert_pluie_inondation = state_attr('sensor.78_weather_alert', 'Pluie-inondation') %} {{ ESP32EP_alert_pluie_inondation }}
+
+- name: ESP32EP_alert_neige_verglas
+  state: >-
+          {% set ESP32EP_alert_neige_verglas = state_attr('sensor.78_weather_alert', 'Neige-verglas') %} {{ ESP32EP_alert_neige_verglas }}
+
+- name: ESP32EP_alert_grand_froid
+  state: >-
+          {% set ESP32EP_alert_grand_froid = state_attr('sensor.78_weather_alert', 'Grand-froid') %} {{ ESP32EP_alert_grand_froid }}
+          
+#**********************************************************************
+#***** Récupération de la météo pour tous les jours de la semaine *****       
+#**********************************************************************
+- name: ESP32EP_Meteo_jour_0
+  state: >-
+          {% set ESP32EP_Meteo_jour_0 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[0].condition %} {{ ESP32EP_Meteo_jour_0 }}
+
+- name: ESP32EP_Meteo_jour_1
+  state: >-
+          {% set ESP32EP_Meteo_jour_1 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[1].condition %} {{ ESP32EP_Meteo_jour_1 }}
+
+- name: ESP32EP_Meteo_jour_2
+  state: >-
+          {% set ESP32EP_Meteo_jour_2 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[2].condition %} {{ ESP32EP_Meteo_jour_2 }}
+
+- name: ESP32EP_Meteo_jour_3
+  state: >-
+          {% set ESP32EP_Meteo_jour_3 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[3].condition %} {{ ESP32EP_Meteo_jour_3 }}
+
+- name: ESP32EP_Meteo_jour_4
+  state: >-
+          {% set ESP32EP_Meteo_jour_4 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[4].condition %} {{ ESP32EP_Meteo_jour_4 }}
+
+- name: ESP32EP_Meteo_jour_5
+  state: >-
+          {% set ESP32EP_Meteo_jour_5 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[5].condition %} {{ ESP32EP_Meteo_jour_5 }}
+          
+#********************************************************************************
+#***** Récupération de la température min pour tous les jours de la semaine *****       
+#********************************************************************************
+- name: ESP32EP_TempMin_jour_0
+  state: >-
+          {% set ESP32EP_TempMin_jour_0 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[0].templow %} {{ ESP32EP_TempMin_jour_0 }}
+
+- name: ESP32EP_TempMin_jour_1
+  state: >-
+          {% set ESP32EP_TempMin_jour_1 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[1].templow %} {{ ESP32EP_TempMin_jour_1 }}
+
+- name: ESP32EP_TempMin_jour_2
+  state: >-
+          {% set ESP32EP_TempMin_jour_2 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[2].templow %} {{ ESP32EP_TempMin_jour_2 }}
+
+- name: ESP32EP_TempMin_jour_3
+  state: >-
+          {% set ESP32EP_TempMin_jour_3 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[3].templow %} {{ ESP32EP_TempMin_jour_3 }}
+
+- name: ESP32EP_TempMin_jour_4
+  state: >-
+          {% set ESP32EP_TempMin_jour_4 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[4].templow %} {{ ESP32EP_TempMin_jour_4 }}
+
+- name: ESP32EP_TempMin_jour_5
+  state: >-
+          {% set ESP32EP_TempMin_jour_5 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[5].templow %} {{ ESP32EP_TempMin_jour_5 }}
+          
+#********************************************************************************
+#***** Récupération de la température max pour tous les jours de la semaine *****       
+#********************************************************************************
+- name: ESP32EP_TempMax_jour_0
+  state: >-
+          {% set ESP32EP_TempMax_jour_0 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[0].temperature %} {{ ESP32EP_TempMax_jour_0 }}
+
+- name: ESP32EP_TempMax_jour_1
+  state: >-
+          {% set ESP32EP_TempMax_jour_1 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[1].temperature %} {{ ESP32EP_TempMax_jour_1 }}
+
+- name: ESP32EP_TempMax_jour_2
+  state: >-
+          {% set ESP32EP_TempMax_jour_2 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[2].temperature %} {{ ESP32EP_TempMax_jour_2 }}
+
+- name: ESP32EP_TempMax_jour_3
+  state: >-
+          {% set ESP32EP_TempMax_jour_3 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[3].temperature %} {{ ESP32EP_TempMax_jour_3 }}
+
+- name: ESP32EP_TempMax_jour_4
+  state: >-
+          {% set ESP32EP_TempMax_jour_4 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[4].temperature %} {{ ESP32EP_TempMax_jour_4 }}
+
+- name: ESP32EP_TempMax_jour_5
+  state: >-
+          {% set ESP32EP_TempMax_jour_5 = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[5].temperature %} {{ ESP32EP_TempMax_jour_5 }}
+
+#******************************************************************************************
+#***** Récupération des prochaines températures pour détecter la tendance + affichage *****       
+#******************************************************************************************
+- name: ESP32EP_Temp_heure_0
+  state: >-
+          {% set ESP32EP_Temp_heure_0 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[0].temperature %} {{ ESP32EP_Temp_heure_0 }}
+
+- name: ESP32EP_Temp_heure_1
+  state: >-
+          {% set ESP32EP_Temp_heure_1 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[1].temperature %} {{ ESP32EP_Temp_heure_1 }}
+          
+- name: ESP32EP_Temp_heure_2
+  state: >-
+          {% set ESP32EP_Temp_heure_2 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[2].temperature %} {{ ESP32EP_Temp_heure_2 }}
+
+#*******************************************************************
+#***** Récupération des prochaines températures pour affichage *****       
+#*******************************************************************
+- name: ESP32EP_Temp_heure_3
+  state: >-
+          {% set ESP32EP_Temp_heure_3 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[3].temperature %} {{ ESP32EP_Temp_heure_3 }}
+          
+- name: ESP32EP_Temp_heure_4
+  state: >-
+          {% set ESP32EP_Temp_heure_4 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[4].temperature %} {{ ESP32EP_Temp_heure_4 }}
+          
+- name: ESP32EP_Temp_heure_5
+  state: >-
+          {% set ESP32EP_Temp_heure_5 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[5].temperature %} {{ ESP32EP_Temp_heure_5 }}
+          
+- name: ESP32EP_Temp_heure_6
+  state: >-
+          {% set ESP32EP_Temp_heure_6 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[6].temperature %} {{ ESP32EP_Temp_heure_6 }}
+          
+- name: ESP32EP_Temp_heure_7
+  state: >-
+          {% set ESP32EP_Temp_heure_7 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[7].temperature %} {{ ESP32EP_Temp_heure_7 }}
+          
+- name: ESP32EP_Temp_heure_8
+  state: >-
+          {% set ESP32EP_Temp_heure_8 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[8].temperature %} {{ ESP32EP_Temp_heure_8 }}
+          
+- name: ESP32EP_Temp_heure_9
+  state: >-
+          {% set ESP32EP_Temp_heure_9 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[9].temperature %} {{ ESP32EP_Temp_heure_9 }}
+          
+- name: ESP32EP_Temp_heure_10
+  state: >-
+          {% set ESP32EP_Temp_heure_10 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[10].temperature %} {{ ESP32EP_Temp_heure_10 }}
+
+- name: ESP32EP_Temp_heure_11
+  state: >-
+          {% set ESP32EP_Temp_heure_11 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[11].temperature %} {{ ESP32EP_Temp_heure_11 }}
+          
+- name: ESP32EP_Temp_heure_12
+  state: >-
+          {% set ESP32EP_Temp_heure_12 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[12].temperature %} {{ ESP32EP_Temp_heure_12 }}
+          
+- name: ESP32EP_Temp_heure_13
+  state: >-
+          {% set ESP32EP_Temp_heure_13 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[13].temperature %} {{ ESP32EP_Temp_heure_13 }}
+          
+- name: ESP32EP_Temp_heure_14
+  state: >-
+          {% set ESP32EP_Temp_heure_14 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[14].temperature %} {{ ESP32EP_Temp_heure_14 }}
+          
+- name: ESP32EP_Temp_heure_15
+  state: >-
+          {% set ESP32EP_Temp_heure_15 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[15].temperature %} {{ ESP32EP_Temp_heure_15 }}
+          
+- name: ESP32EP_Temp_heure_16
+  state: >-
+          {% set ESP32EP_Temp_heure_16 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[16].temperature %} {{ ESP32EP_Temp_heure_16 }}
+          
+- name: ESP32EP_Temp_heure_17
+  state: >-
+          {% set ESP32EP_Temp_heure_17 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[17].temperature %} {{ ESP32EP_Temp_heure_17 }}
+          
+- name: ESP32EP_Temp_heure_18
+  state: >-
+          {% set ESP32EP_Temp_heure_18 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[18].temperature %} {{ ESP32EP_Temp_heure_18 }}
+          
+- name: ESP32EP_Temp_heure_19
+  state: >-
+          {% set ESP32EP_Temp_heure_19 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[19].temperature %} {{ ESP32EP_Temp_heure_19 }}
+
+- name: ESP32EP_Temp_heure_20
+  state: >-
+          {% set ESP32EP_Temp_heure_20 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[20].temperature %} {{ ESP32EP_Temp_heure_20 }}
+          
+- name: ESP32EP_Temp_heure_21
+  state: >-
+          {% set ESP32EP_Temp_heure_21 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[21].temperature %} {{ ESP32EP_Temp_heure_21 }}
+          
+- name: ESP32EP_Temp_heure_22
+  state: >-
+          {% set ESP32EP_Temp_heure_22 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[22].temperature %} {{ ESP32EP_Temp_heure_22 }}
+          
+- name: ESP32EP_Temp_heure_23
+  state: >-
+          {% set ESP32EP_Temp_heure_23 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[23].temperature %} {{ ESP32EP_Temp_heure_23 }}
+          
+- name: ESP32EP_Temp_heure_24
+  state: >-
+          {% set ESP32EP_Temp_heure_24 = state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[24].temperature %} {{ ESP32EP_Temp_heure_24 }}
+          
+          
+#***********************************************************************************
+#***** Récupération des prochaines heures pour affichage avec les températures *****       
+#***********************************************************************************
+- name:  ESP32EP_titre_heure_meteo_1
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[1].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_2
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[2].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_3
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[3].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_4
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[4].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_5
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[5].datetime) %}
+              {{ time.hour}}
+              
+- name: ESP32EP_titre_heure_meteo_6
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[6].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_7
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[7].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_8
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[8].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_9
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[9].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_10
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[10].datetime) %}
+              {{ time.hour}}
+          
+- name:  ESP32EP_titre_heure_meteo_11
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[11].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_12
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[12].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_13
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[13].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_14
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[14].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_15
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[15].datetime) %}
+              {{ time.hour}}
+              
+- name: ESP32EP_titre_heure_meteo_16
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[16].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_17
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[17].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_18
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[18].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_19
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[19].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_20
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[20].datetime) %}
+              {{ time.hour}}
+
+- name:  ESP32EP_titre_heure_meteo_21
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[21].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_22
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[22].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_23
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[23].datetime) %}
+              {{ time.hour}}
+
+- name: ESP32EP_titre_heure_meteo_24
+  icon: mdi:calendar-today
+  state: >
+          {% set time = as_datetime(state_attr("sensor.ESP32EP_Prevision_Meteo_H","forecast")[24].datetime) %}
+              {{ time.hour}}
+
+#************************************************
+#***** Récupération des jours de la semaine *****       
+#************************************************            
+- name: ESP32EP_titre_jour_0
+  state: >-
+          {% set ESP32EP_titre_jour_0 = ['LUN.', 'MAR.', 'MER.', 'JEU.', 'VEN.', 'SAM.', 'DIM.'][(state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[0].datetime|as_datetime).weekday()] %}
+                {{ ESP32EP_titre_jour_0 }}
+          
+- name: ESP32EP_titre_jour_1
+  state: >-
+          {% set ESP32EP_titre_jour_meteo_1 = ['LUN.', 'MAR.', 'MER.', 'JEU.', 'VEN.', 'SAM.', 'DIM.'][(state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[1].datetime|as_datetime).weekday()] %}
+                {{ ESP32EP_titre_jour_meteo_1 }}
+
+- name: ESP32EP_titre_jour_2
+  state: >-
+          {% set ESP32EP_titre_jour_meteo_2 = ['LUN.', 'MAR.', 'MER.', 'JEU.', 'VEN.', 'SAM.', 'DIM.'][(state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[2].datetime|as_datetime).weekday()] %}
+                {{ ESP32EP_titre_jour_meteo_2 }}                               
+                
+- name: ESP32EP_titre_jour_3
+  state: >-
+          {% set ESP32EP_titre_jour_meteo_3 = ['LUN.', 'MAR.', 'MER.', 'JEU.', 'VEN.', 'SAM.', 'DIM.'][(state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[3].datetime|as_datetime).weekday()] %}
+                {{ ESP32EP_titre_jour_meteo_3 }}
+
+- name: ESP32EP_titre_jour_4
+  state: >-
+          {% set ESP32EP_titre_jour_meteo_4 = ['LUN.', 'MAR.', 'MER.', 'JEU.', 'VEN.', 'SAM.', 'DIM.'][(state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[4].datetime|as_datetime).weekday()] %}
+                {{ ESP32EP_titre_jour_meteo_4 }}
+
+- name: ESP32EP_titre_jour_5
+  state: >-
+          {% set ESP32EP_titre_jour_meteo_5 = ['LUN.', 'MAR.', 'MER.', 'JEU.', 'VEN.', 'SAM.', 'DIM.'][(state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[5].datetime|as_datetime).weekday()] %}
+                {{ ESP32EP_titre_jour_meteo_5 }}
+
+- name: ESP32EP_jour_tmin
+  state: >-
+          {% set jour_tmin = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[0]. templow | float %}
+                {{ jour_tmin }}
+
+- name: ESP32EP_Jour_tmax
+  state: >-
+          {% set jour_tmax = state_attr("sensor.ESP32EP_Prevision_Meteo_J","forecast")[0].temperature | float %}
+                {{ jour_tmax }}
+                
