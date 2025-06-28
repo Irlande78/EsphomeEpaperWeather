@@ -18,4 +18,4 @@ Installer l'intégration Météo France sur HA avec votre ville.
 Fichier ESP32EP_Sensors.yaml à mettre dans /homeassistant/template_sensors/ESP32EP_Sensors.yaml
 
 J'ai créé l'affichage dont j'avais besoin, en ajoutant quelques capteurs et les infos de RTE pour l'abonnement tempo d'EDF.
-Ne faites pas comme moi, n'achetez pas un cran avec trois couleurs car le rafraîchissement est vraiment trop long!
+Ne faites pas comme moi, n'achetez pas un écran avec trois couleurs car le rafraîchissement est vraiment trop long!
