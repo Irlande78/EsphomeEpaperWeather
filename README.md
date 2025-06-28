@@ -7,4 +7,7 @@ Je publie donc à mon tour mon code pour éventuellement aider quelqu'un à mon 
 
 Pour réaliser ce projet j'ai utilisé :
 * Un écran epaper waveshare 800x400 7,5'' :https://www.waveshare.com/7.5inch-e-paper.htm
+![image](https://github.com/user-attachments/assets/04f8dacb-44fa-428c-bbe9-c4144538392f)
+
 * Une carte ESP32 drive pour écran : https://fr.aliexpress.com/item/1005007370290558.html?spm=a2g0o.order_list.order_list_main.41.7c495e5b0QjLk6&gatewayAdapt=glo2fra
+![image](https://github.com/user-attachments/assets/1a8bf4d6-7600-47c5-b2e7-674d37dcdef6)
