@@ -15,3 +15,4 @@ Je publie donc à mon tour mon code pour éventuellement aider quelqu'un à mon 
 
 # Installation
 Installer l'intégration Météo France sur HA avec votre ville.
+Fichier ESP32EP_Sensors.yaml à mettre dans /homeassistant/template_sensors/ESP32EP_Sensors.yaml
