@@ -48,36 +48,6 @@ template:
         attributes:
           forecast: "{{ hourly_var['weather.carrieres_sous_poissy'].forecast }}"
 
-
-# Template pour corriger la valeur de puissance retournée des prises : diviser par 10
-sensor:
-    platform: template
-    sensors:
-        prisevoiture_puissance_corrigee:
-            friendly_name : 'sensor.prisevoiture_puissance_corrigee'
-            unit_of_measurement: 'W'
-            value_template: "{{ (states('sensor.prisevoiture_puissance') | float / 10) | round(0) }}"
-
-        balloneauchaude_puissance_corrigee:
-            friendly_name : 'sensor.balloneauchaude_puissance_corrigee'
-            unit_of_measurement: 'W'
-            value_template: "{{ (states('sensor.balloneauchaude_puissance') | float / 10) | round(0) }}"
-
-        lampe_salon_puissance_corrigee:
-            friendly_name : 'sensor.lampe_salon_puissance_corrigee'
-            unit_of_measurement: 'W'
-            value_template: "{{ (states('sensor.lampe_salon_puissance') | float / 10) | round(0) }}"
-        
-        tele_salon_puissance_corrigee:
-            friendly_name : 'sensor.tele_salon_puissance_corrigee'
-            unit_of_measurement: 'W'
-            value_template: "{{ (states('sensor.tele_salon_puissance') | float / 10) | round(0) }}"  
-
-        temperature_salon_corrigee:
-            friendly_name : 'sensor.temperature_Salon_Corrigée'
-            unit_of_measurement: '°C'
-            value_template: "{{ (states('sensor.esp32_poele_bme280_1_temperature') | float +1) | round(1) }}"
-
 # Code pour affichage centrale météo epaper
 #************************************************************
 #*****  Code pour affichage centrale météo epaper : date **** 
