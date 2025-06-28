@@ -13,6 +13,5 @@ Pour réaliser ce projet j'ai utilisé :
 ![image](https://github.com/user-attachments/assets/1a8bf4d6-7600-47c5-b2e7-674d37dcdef6)
 
 
-Installation:
-Home assistant:
+Installation
 Installer l'intégration Météo France sur HA avec votre ville.
